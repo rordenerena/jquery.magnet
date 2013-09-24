@@ -5,11 +5,10 @@
             var settings = $.extend({
                 offset: "10%",
                 offsetInner: "10px",
-                offsetOutter: "10px",
                 offsetCenterV: "10px",
                 offsetCenterH: "10px",
                 offsetCenter: "10px",
-                type: ["INNER", "CENTERV"], // Array with the types availables are: INNER, OUTTER, CENTERV, CENTERH, CENTER, ALL
+                type: ["INNER", "CENTERV"], // Array with the types availables are: INNER, CENTERV, CENTERH, CENTER, ALL
                 animate: true,
                 dragCallback: null,
                 overCallback: null,
@@ -44,15 +43,11 @@
                         este = this;
                         getConfig(event, ui);
 
-                        var inner = false, outter = false, centerv = false, centerh = false, center = false;
+                        var inner = false, centerv = false, centerh = false, center = false;
                         
                         if ($.inArray("INNER", settings.type)!==-1 || $.inArray("ALL", settings.type)!==-1) {
                             debug("With Inner");
                             inner = getInner(event, ui);
-                        }
-                        if ($.inArray("OUTTER", settings.type)!==-1 || $.inArray("ALL", settings.type)!==-1) {
-                            debug("With Outter");
-//                            outter = getOutter(event, ui);
                         }
                         if ($.inArray("CENTERV", settings.type)!==-1 || $.inArray("ALL", settings.type)!==-1) {
                             debug("With CenterV");
@@ -69,7 +64,7 @@
 
                         callback("drop", event, ui);
 
-                        if (inner || outter || centerv || centerh || center) {
+                        if (inner || centerv || centerh || center) {
                             animateElement();
                             callback("animate", event, ui)
                         }
