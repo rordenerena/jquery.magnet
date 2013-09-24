@@ -7,6 +7,23 @@
         <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
         <script src="jquery.magnet.js"></script>
         <link rel="stylesheet" href="jquery.magnet.css" />
+        <style>
+            .dropping {
+                position: absolute;
+                right: 10px;
+                top: 10px;
+                background-color: red;
+                width: 200px;
+                height: 200px;
+            }
+
+            .draging {
+                position: absolute;
+                width: 30px;
+                height: 30px;
+                background-color: yellow;
+            }
+        </style>
     </head>
     <body>
         <div class="dropping"></div>
