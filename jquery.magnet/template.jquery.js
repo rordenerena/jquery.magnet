@@ -8,11 +8,26 @@
                 css: {
                     backgroundColor: red
                 },
-                callback: null
+                callback: null,
+                //Public method
+                value: function(value) {
+                    if (value === undefined) {
+                        return this.settings.value;
+                    } else {
+                        //Set the value to value property
+                    }
+                },
+                //private method
+                _search: function() {
+
+                },
+                destroy: function() {
+
+                }
             }, options);
 
             return this.each(function() {
-                $(this).draggable();
+                
             });
         }
     };
