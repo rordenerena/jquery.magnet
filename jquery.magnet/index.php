@@ -5,32 +5,7 @@
         <title></title>
         <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
         <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-        <style>
-            .dropping {
-                position: absolute;
-                right: 10px;
-                top: 10px;
-                background-color: red;
-                width: 200px;
-                height: 200px;
-            }
-
-            .draging {
-                position: absolute;
-                width: 30px;
-                height: 30px;
-                background-color: yellow;
-            }
-
-            .activeDragging {
-                background-color: orange !important;
-            }
-
-            .hoverDrop {
-                background-color: black !important;
-            }
-
-        </style>
+        <link rel="stylesheet" href="jquery.magnet.css" />
     </head>
     <body>
         <div class="dropping"></div>
@@ -64,7 +39,7 @@
                     var pwidth = $(this).width();
 
                     var offset = 30;
-
+                    //INNER MODE TO MAGNET THE ELEMENTS
                     var moved = false;
 
                     if (Math.abs(ptop - ctop) <= offset) {

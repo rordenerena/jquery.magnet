@@ -1,0 +1,23 @@
+.dropping {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    background-color: red;
+    width: 200px;
+    height: 200px;
+}
+
+.draging {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background-color: yellow;
+}
+
+.activeDragging {
+    background-color: orange !important;
+}
+
+.hoverDrop {
+    background-color: black !important;
+}
