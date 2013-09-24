@@ -3,10 +3,7 @@
     $.fn.magnet = function(options) {
         if (jQuery.ui) {
             var settings = $.extend({
-                offset: "10%",
-                offsetInner: "10px",
-                offsetCenterV: "10px",
-                offsetCenterH: "10px",
+                offset: "10px",
                 offsetCenter: "10px",
                 type: ["INNER", "CENTERV"], // Array with the types availables are: INNER, CENTERV, CENTERH, CENTER, ALL
                 animate: true,
@@ -44,20 +41,20 @@
                         getConfig(event, ui);
 
                         var inner = false, centerv = false, centerh = false, center = false;
-                        
-                        if ($.inArray("INNER", settings.type)!==-1 || $.inArray("ALL", settings.type)!==-1) {
+
+                        if ($.inArray("INNER", settings.type) !== -1 || $.inArray("ALL", settings.type) !== -1) {
                             debug("With Inner");
                             inner = getInner(event, ui);
                         }
-                        if ($.inArray("CENTERV", settings.type)!==-1 || $.inArray("ALL", settings.type)!==-1) {
+                        if ($.inArray("CENTERV", settings.type) !== -1 || $.inArray("ALL", settings.type) !== -1) {
                             debug("With CenterV");
                             centerv = getCenterV(event, ui);
                         }
-                        if ($.inArray("CENTERH", settings.type)!==-1 || $.inArray("ALL", settings.type)!==-1) {
+                        if ($.inArray("CENTERH", settings.type) !== -1 || $.inArray("ALL", settings.type) !== -1) {
                             debug("With CenterH");
 //                            centerh = getCenterH(event, ui);
                         }
-                        if ($.inArray("CENTER", settings.type)!==-1 || $.inArray("ALL", settings.type)!==-1) {
+                        if ($.inArray("CENTER", settings.type) !== -1 || $.inArray("ALL", settings.type) !== -1) {
                             debug("With Center Complete");
 //                            center = getCenter(event, ui);
                         }
@@ -65,19 +62,21 @@
                         callback("drop", event, ui);
 
                         if (inner || centerv || centerh || center) {
-                            animateElement();
-                            callback("animate", event, ui)
+                            animateElement(event, ui);
                         }
                     }
                 });
             });
         }
+
         /**
          * Method to animate the element dropped in this
+         * @param {type} event
+         * @param {type} ui
          */
-        function animateElement() {
+        function animateElement(event, ui) {
             if (settings.animate) {
-
+                callback("animate", event, ui);
             }
         }
 
