@@ -34,22 +34,7 @@
                 offset: "10px",
                 type: ["INNER", "CENTERV", "CENTERH"],
 //                type: ["INNER"],
-                classAffected: "roberto",
-                animateCallback: function(event, ui) {
-                    var el = ui.draggable;
-                    el.animate({
-                        opacity: 0,
-                        backgroundColor: "red"
-                    }, 200, function() {
-                        el.animate({
-                            opacity: 1,
-                            backgroundColor: "pink"
-                        }, 200);
-                    });
-                },
-                overCallback: function(event, ui) {
-                    console.log("over");
-                }
+                classAffected: "roberto"
             });
 
             $(".draging").draggable();

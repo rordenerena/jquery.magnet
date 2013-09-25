@@ -22,7 +22,7 @@
             var vlimitLeftCentral, vlimitRightCentral; // Vertical center line data
             var hlimitTopCentral, hlimitBottomCentral; // Horizontal center line data
             var isInner, isCenterV, isCenterH, isCenter; // Type positioning flags
-            var isConfigured;
+            var isAddedVisibleDropZone;
             var este;
 
             return this.each(function() {
@@ -59,19 +59,15 @@
                             var inner = false, centerv = false, centerh = false, center = false;
 
                             if (isInner) {
-                                debug("With Inner");
                                 inner = getInner(event, ui);
                             }
                             if (isCenterV) {
-                                debug("With CenterV");
                                 centerv = getCenterV(event, ui);
                             }
                             if (isCenterH) {
-                                debug("With CenterH");
                                 centerh = getCenterH(event, ui);
                             }
                             if (isCenter) {
-                                debug("With Center Complete");
 //                            center = getCenter(event, ui);
                             }
 
@@ -146,54 +142,64 @@
          * @param {type} ui
          */
         function getConfig(event, ui) {
-            if (!isConfigured) {
-                var el = ui.draggable;
-                el = $(el);
 
-                ctop = el.position().top;
-                cleft = el.position().left;
-                cheight = el.height();
-                cwidth = el.width();
+            var el = ui.draggable;
+            el = $(el);
 
-                ptop = $(este).position().top;
-                pleft = $(este).position().left;
-                pheight = $(este).height();
-                pwidth = $(este).width();
+            ctop = el.position().top;
+            cleft = el.position().left;
+            cheight = el.height();
+            cwidth = el.width();
 
-                cCenterLeft = (cleft + (cwidth / 2));
-                cCenterTop = (ctop + (cheight / 2));
+            ptop = $(este).position().top;
+            pleft = $(este).position().left;
+            pheight = $(este).height();
+            pwidth = $(este).width();
 
-                var offsetH = getOffset(este, "h");
-                var offsetV = getOffset(este, "v");
+            cCenterLeft = (cleft + (cwidth / 2));
+            cCenterTop = (ctop + (cheight / 2));
 
-                vlimitLeftCentral = (pleft + (pwidth / 2) - offsetH);
-                vlimitRightCentral = (pleft + (pwidth / 2) + offsetH);
+            var offsetH = getOffset(este, "h");
+            var offsetV = getOffset(este, "v");
 
-                hlimitTopCentral = (ptop + (pheight / 2) - offsetV);
-                hlimitBottomCentral = (ptop + (pheight / 2) + offsetV);
+            var pLeftCenter = pleft + (pwidth / 2);
+            var pTopCenter = ptop + (pheight / 2);
 
-                isInner = isCenter = isCenterH = isCenterV = false;
+            vlimitLeftCentral = pLeftCenter - offsetH;
+            vlimitRightCentral = pLeftCenter + offsetH;
 
-                if ($.inArray("INNER", settings.type) !== -1 || $.inArray("ALL", settings.type) !== -1) {
-                    isInner = true;
-                }
-                if ($.inArray("CENTERV", settings.type) !== -1 || $.inArray("ALL", settings.type) !== -1) {
-                    isCenterV = true;
-                }
-                if ($.inArray("CENTERH", settings.type) !== -1 || $.inArray("ALL", settings.type) !== -1) {
-                    isCenterH = true;
-                }
-                if ($.inArray("CENTER", settings.type) !== -1 || $.inArray("ALL", settings.type) !== -1) {
+            hlimitTopCentral = pTopCenter - offsetV;
+            hlimitBottomCentral = pTopCenter + offsetV;
+
+            isInner = isCenter = isCenterH = isCenterV = false;
+
+            if ($.inArray("INNER", settings.type) !== -1 || $.inArray("ALL", settings.type) !== -1) {
+                isInner = true;
+            }
+            if ($.inArray("CENTERV", settings.type) !== -1 || $.inArray("ALL", settings.type) !== -1) {
+                isCenterV = true;
+            }
+            if ($.inArray("CENTERH", settings.type) !== -1 || $.inArray("ALL", settings.type) !== -1) {
+                isCenterH = true;
+            }
+            if ($.inArray("CENTER", settings.type) !== -1) {
+                if ($.inArray("CENTERV", settings.type) !== -1 && $.inArray("CENTERH", settings.type) !== -1) {
+                    //Nothing TODO
+                } else {
                     isCenter = true;
                 }
-                addDroppingZone();
+            }
+
+            if (!isAddedVisibleDropZone) {
+                isAddedVisibleDropZone = true;
+                addVisibleDropZone();
             }
         }
 
         /**
          * Add elements that show the dropping zone enabled
          */
-        function addDroppingZone() {
+        function addVisibleDropZone() {
             if (isInner) {
                 var offsetH = getOffset(este, "h");
                 var offsetV = getOffset(este, "v");
@@ -239,6 +245,7 @@
          * @returns {Boolean}
          */
         function getCenterV(event, ui) {
+            getConfig(event, ui);
             var el = $(ui.draggable);
             if (cCenterLeft >= vlimitLeftCentral && cCenterLeft <= vlimitRightCentral) {
                 el.css("left", function() {
@@ -257,6 +264,7 @@
          * @returns {Boolean}
          */
         function getCenterH(event, ui) {
+            getConfig(event, ui);
             var el = $(ui.draggable);
             if (cCenterTop >= hlimitTopCentral && cCenterTop <= hlimitBottomCentral) {
                 el.css("top", function() {
@@ -274,6 +282,8 @@
          * @param {type} ui
          */
         function getInner(event, ui) {
+            getConfig(event, ui);
+
             var el = ui.draggable;
             el = $(el);
 
@@ -284,25 +294,25 @@
 
             //Top
             if (Math.abs(ptop - ctop) <= offsetV) {
-                debug("TOP");
+                debug("TOP: " + ptop + "px");
                 el.css("top", ptop + "px");
                 inner = true;
             }
             //Bottom
             if (Math.abs((ptop + pheight) - (ctop + cheight)) <= offsetV) {
-                debug("BOTTOM");
+                debug("BOTTOM: " + (ptop + pheight - cheight) + "px");
                 el.css("top", (ptop + pheight - cheight) + "px");
                 inner = true;
             }
             //Left
             if (Math.abs(pleft - cleft) <= offsetH) {
-                debug("LEFT");
+                debug("LEFT: " + pleft + "px");
                 el.css("left", pleft + "px");
                 inner = true;
             }
             //Right
             if (Math.abs((pleft + pwidth) - (cleft + cwidth)) <= offsetH) {
-                debug("RIGHT");
+                debug("RIGHT: " + (pleft + pwidth - cwidth) + "px");
                 el.css("left", (pleft + pwidth - cwidth) + "px");
                 inner = true;
             }
@@ -328,15 +338,15 @@
                     value = el.height();
                 }
 
-                return value * (offset.replace("%", "", 'g') / 100);
+                return parseInt(value * (offset.replace("%", "", 'g') / 100), 10);
             } else if (offset.indexOf("px") !== -1) {
                 //In pixels
-                return offset.replace("px", "", 'g');
+                return parseInt(offset.replace("px", "", 'g'), 10);
             } else if (offset.indexOf("em") !== -1) {
                 //EM => 1em === 16px
-                return offset.replace("em", "", 'g') * 16;
+                return parseInt(offset.replace("em", "", 'g') * 16, 10);
             } else {
-                return offset;
+                return parseInt(offset, 10);
             }
 
         }
@@ -354,22 +364,22 @@
                     }
                     break;
                 case "drop":
-                    if (settings.dropCallback !== null) {
+                    if (settings.dropCallback !== null && (typeof settings.dropCallback === 'function')) {
                         settings.dropCallback(event, ui);
                     }
                     break;
                 case "over":
-                    if (settings.overCallback !== null) {
+                    if (settings.overCallback !== null && (typeof settings.overCallback === 'function')) {
                         settings.overCallback(event, ui);
                     }
                     break;
                 case "drag":
-                    if (settings.dragCallback !== null) {
+                    if (settings.dragCallback !== null && (typeof settings.dragCallback === 'function')) {
                         settings.dragCallback(event, ui);
                     }
                     break;
                 case "animate":
-                    if (settings.animateCallback !== null) {
+                    if (settings.animateCallback !== null && (typeof settings.animateCallback === 'function')) {
                         settings.animateCallback(event, ui);
                     }
                     break;
