@@ -1,7 +1,27 @@
-.activeDragging {
+.magnet-drag {
     background-color: orange !important;
 }
 
-.hoverDrop {
+.magnet-over {
+    background-color: pink !important;
+}
+
+.magnet-hover {
     background-color: black !important;
+}
+
+.magnet-area {
+    background-color: transparent !important;
+}
+
+.magnet-area-horizontal {
+    border: 1px solid aqua;
+}
+
+.magnet-area-vertical {
+    border: 1px solid aqua;
+}
+
+.magnet-area-inner {
+    border: 1px solid aqua;
 }

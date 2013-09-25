@@ -5,6 +5,7 @@
         <title></title>
         <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
         <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+        <script src="extendJs.js"></script>
         <script src="jquery.magnet.js"></script>
         <link rel="stylesheet" href="jquery.magnet.css" />
         <style>
@@ -13,32 +14,36 @@
                 right: 10px;
                 top: 10px;
                 background-color: red;
-                width: 200px;
-                height: 200px;
+                width: 150px;
+                height: 300px;
             }
 
             .draging {
                 position: absolute;
                 width: 30px;
-                height: 30px;
+                height: 10px;
                 background-color: yellow;
             }
         </style>
     </head>
     <body>
         <div class="dropping"></div>
-        <div class="draging"></div>
+        <div class="draging roberto"></div>
         <script>
             $(".dropping").magnet({
-                offset: "20px",
-                type: ["INNER"],
+                offset: "10px",
+                type: ["INNER", "CENTERV", "CENTERH"],
+//                type: ["INNER"],
+                classAffected: "roberto",
                 animateCallback: function(event, ui) {
                     var el = ui.draggable;
                     el.animate({
-                        opacity: 0
+                        opacity: 0,
+                        backgroundColor: "red"
                     }, 200, function() {
                         el.animate({
-                            opacity: 1
+                            opacity: 1,
+                            backgroundColor: "pink"
                         }, 200);
                     });
                 },
