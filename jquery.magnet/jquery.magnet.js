@@ -43,7 +43,8 @@
                 outCallback: null,
                 animateCallback: null,
                 debug: true,
-                classAffected: "ui-draggable-dragging"
+                classAffected: "",
+                tolerance: "fit"
             }, options);
 
             var ctop, cleft, cwidth, cheight; // Children draggable data
@@ -58,6 +59,7 @@
             return this.each(function() {
                 este = this;
                 $(this).droppable({
+                    tolerance: settings.tolerance,
                     activate: function(event, ui) {
                         magnetZone("hide");
                         getConfig(event, ui);
@@ -415,7 +417,10 @@
                     break;
             }
         }
-
+        /**
+         * Method to print to standard output messages if plugin is in debug mode
+         * @param {type} message
+         */
         function debug(message) {
             if (settings.debug && window.console && window.console.log) {
                 window.console.log(message);
@@ -425,3 +430,37 @@
     };
 
 })(jQuery);
+
+
+/**
+ * Delete the white spaces at start and at the end of String
+ * @type String
+ */
+String.prototype.trim = function() {
+    return this.replace(/^\s+|\s+$/g, "");
+}
+
+/**
+ * Delete the white spaces at start of String
+ * @returns String
+ */
+String.prototype.ltrim = function() {
+    return this.replace(/^\s+/, "");
+}
+
+/**
+ * Delete the white spaces at end of String
+ * @returns String
+ */
+String.prototype.rtrim = function() {
+    return this.replace(/\s+$/, "");
+}
+
+/**
+ * Find a string inside String
+ * @type Boolean
+ */
+String.prototype.contains = function(str) {
+    var str = this.toString();
+    return (str.indexOf(str) !== -1);
+}
