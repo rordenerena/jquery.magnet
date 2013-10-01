@@ -44,7 +44,7 @@
                 animateCallback: null,
                 debug: true,
                 classAffected: "",
-                tolerance: "fit"
+                tolerance: "touch"
             }, options);
 
             var ctop, cleft, cwidth, cheight; // Children draggable data
