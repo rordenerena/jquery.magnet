@@ -61,33 +61,34 @@
                 $(this).droppable({
                     tolerance: settings.tolerance,
                     activate: function(event, ui) {
-                        magnetZone("hide");
-                        getConfig(event, ui);
                         if (isValidElement(event, ui)) {
+                            magnetZone("hide");
+                            getConfig(event, ui);
                             $(this).addClass("magnet-drag");
                             callback("drag", event, ui);
                         }
                     },
                     over: function(event, ui) {
-                        magnetZone("show");
-                        getConfig(event, ui);
                         if (isValidElement(event, ui)) {
+                            magnetZone("show");
+                            getConfig(event, ui);
                             $(this).addClass("magnet-hover");
                             callback("over", event, ui);
                         }
                     },
                     out: function(event, ui) {
-                        magnetZone("hide");
-                        getConfig(event, ui);
                         if (isValidElement(event, ui)) {
+                            magnetZone("hide");
+                            getConfig(event, ui);
                             $(this).removeClass("magnet-hover");
                             callback("out", event, ui);
                         }
                     },
                     drop: function(event, ui) {
-                        magnetZone("hide");
-                        getConfig(event, ui);
                         if (isValidElement(event, ui)) {
+                            magnetZone("hide");
+                            getConfig(event, ui);
+
                             var inner = false, centerv = false, centerh = false, center = false;
 
                             if (isInner) {
@@ -121,8 +122,52 @@
         function magnetZone(action) {
             if (action === "show") {
                 $(este).find(".magnet-area").show();
+                resizeMagnetArea();
             } else if (action === "hide") {
                 $(este).find(".magnet-area").hide();
+            }
+        }
+
+        /**
+         * Resize the element of the magnet area
+         */
+        function resizeMagnetArea() {
+            var magnetArea = $(este).find(".magnet-area");
+            if (isInner) {
+                var offsetH = getOffset(este, "h");
+                var offsetV = getOffset(este, "v");
+
+                magnetArea.css({
+                    position: "absolute",
+                    top: offsetV + "px",
+                    left: offsetH + "px",
+                    width: (pwidth - (offsetH * 2)) + "px",
+                    height: (pheight - (offsetV * 2)) + "px"
+                });
+            }
+
+            if (isCenterV) {
+                var offsetH = getOffset(este, "h");
+
+                magnetArea.css({
+                    position: "absolute",
+                    top: "0px",
+                    left: ((pwidth / 2) - offsetH) + "px",
+                    width: (offsetH * 2) + "px",
+                    height: pheight + "px"
+                });
+            }
+
+            if (isCenterH) {
+                var offsetV = getOffset(este, "v");
+
+                magnetArea.css({
+                    position: "absolute",
+                    top: ((pheight / 2) - offsetV) + "px",
+                    left: "0px",
+                    width: pwidth + "px",
+                    height: (offsetV * 2) + "px"
+                });
             }
         }
 
@@ -232,41 +277,17 @@
          * Add elements that show the dropping zone enabled
          */
         function addVisibleDropZone() {
+            var div = $("<div>").addClass("magnet-area").hide().appendTo(este);
             if (isInner) {
-                var offsetH = getOffset(este, "h");
-                var offsetV = getOffset(este, "v");
-
-                $("<div>").css({
-                    position: "absolute",
-                    top: offsetV + "px",
-                    left: offsetH + "px",
-                    width: (pwidth - (offsetH * 2)) + "px",
-                    height: (pheight - (offsetV * 2)) + "px"
-                }).addClass("magnet-area-inner magnet-area").hide().appendTo(este);
+                div.addClass("magnet-area-inner");
             }
 
             if (isCenterV) {
-                var offsetH = getOffset(este, "h");
-
-                $("<div>").css({
-                    position: "absolute",
-                    top: "0px",
-                    left: ((pwidth / 2) - offsetH) + "px",
-                    width: (offsetH * 2) + "px",
-                    height: pheight + "px"
-                }).addClass("magnet-area-vertical magnet-area").hide().appendTo(este);
+                div.addClass("magnet-area-vertical");
             }
 
             if (isCenterH) {
-                var offsetV = getOffset(este, "v");
-
-                $("<div>").css({
-                    position: "absolute",
-                    top: ((pheight / 2) - offsetV) + "px",
-                    left: "0px",
-                    width: pwidth + "px",
-                    height: (offsetV * 2) + "px"
-                }).addClass("magnet-area-horizontal magnet-area").hide().appendTo(este);
+                div.addClass("magnet-area-horizontal");
             }
         }
 
