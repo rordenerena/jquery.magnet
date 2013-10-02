@@ -184,7 +184,7 @@
 
             if (typeof classes === "string") {
                 classes = classes.rtrim();
-                classes = classes.split(",");
+                classes = classes.split(" ");
             } else {
                 classes = new Array("");
             }
