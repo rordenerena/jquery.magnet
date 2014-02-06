@@ -35,8 +35,10 @@
             var settings = $.extend({
                 offset: "10px",
 //                offsetCenter: "10px",
-                type: ["INNER", "CENTERV"], // Array with the types availables are: INNER, CENTERV, CENTERH, CENTER, ALL
+                padding: "0px",
+                type: ["INNER"], // Array with the types availables are: INNER, CENTERV, CENTERH, CENTER, ALL
                 animate: true,
+                highlight: true,
                 dragCallback: null,
                 overCallback: null,
                 dropCallback: null,
@@ -44,6 +46,7 @@
                 animateCallback: null,
                 debug: true,
                 classAffected: "",
+                classEphemeral: "",
                 tolerance: "touch"
             }, options);
 
@@ -61,7 +64,7 @@
                 $(this).droppable({
                     tolerance: settings.tolerance,
                     activate: function(event, ui) {
-                        if (isValidElement(event, ui)) {
+                        if (isValidElement(event, ui) || isEphemeralElement(event, ui)) {
                             magnetZone("hide");
                             getConfig(event, ui);
                             $(this).addClass("magnet-drag");
@@ -69,42 +72,49 @@
                         }
                     },
                     over: function(event, ui) {
-                        if (isValidElement(event, ui)) {
+                        if (isValidElement(event, ui) || isEphemeralElement(event, ui)) {
                             magnetZone("show");
                             getConfig(event, ui);
+
                             $(this).addClass("magnet-hover");
                             callback("over", event, ui);
                         }
                     },
                     out: function(event, ui) {
-                        if (isValidElement(event, ui)) {
+                        if (isValidElement(event, ui) || isEphemeralElement(event, ui)) {
                             magnetZone("hide");
                             getConfig(event, ui);
+
                             $(this).removeClass("magnet-hover");
                             callback("out", event, ui);
                         }
                     },
                     drop: function(event, ui) {
-                        if (isValidElement(event, ui)) {
+                        var isEphemeral = isEphemeralElement(event, ui);
+                        if (isValidElement(event, ui) || isEphemeral) {
                             magnetZone("hide");
                             getConfig(event, ui);
 
                             var inner = false, centerv = false, centerh = false, center = false;
 
                             if (isInner) {
-                                inner = getInner(event, ui);
+                                inner = setInner(event, ui);
                             }
                             if (isCenterV) {
-                                centerv = getCenterV(event, ui);
+                                centerv = setCenterV(event, ui);
                             }
                             if (isCenterH) {
-                                centerh = getCenterH(event, ui);
+                                centerh = setCenterH(event, ui);
                             }
                             if (isCenter) {
 //                            center = getCenter(event, ui);
                             }
 
-                            callback("drop", event, ui);
+                            applyPadding(event, ui);
+
+                            if (!isEphemeral) {
+                                callback("drop", event, ui);
+                            }
 
                             if (inner || centerv || centerh || center) {
                                 animateElement(event, ui);
@@ -120,11 +130,13 @@
          * @param {type} action
          */
         function magnetZone(action) {
-            if (action === "show") {
-                $(este).find(".magnet-area").show();
-                resizeMagnetArea();
-            } else if (action === "hide") {
-                $(este).find(".magnet-area").hide();
+            if (settings.highlight) {
+                if (action === "show") {
+                    $(este).find(".magnet-area").show();
+                    resizeMagnetArea();
+                } else if (action === "hide") {
+                    $(este).find(".magnet-area").hide();
+                }
             }
         }
 
@@ -132,42 +144,51 @@
          * Resize the element of the magnet area
          */
         function resizeMagnetArea() {
-            var magnetArea = $(este).find(".magnet-area");
-            if (isInner) {
-                var offsetH = getOffset(este, "h");
-                var offsetV = getOffset(este, "v");
 
-                magnetArea.css({
-                    position: "absolute",
-                    top: offsetV + "px",
-                    left: offsetH + "px",
-                    width: (pwidth - (offsetH * 2)) + "px",
-                    height: (pheight - (offsetV * 2)) + "px"
-                });
-            }
+            var tipos = ["magnet-area-black", "magnet-area-white"];
+            var offset = 0;
 
-            if (isCenterV) {
-                var offsetH = getOffset(este, "h");
+            for (var i = 0; i < tipos.length; i++, offset++) {
 
-                magnetArea.css({
-                    position: "absolute",
-                    top: "0px",
-                    left: ((pwidth / 2) - offsetH) + "px",
-                    width: (offsetH * 2) + "px",
-                    height: pheight + "px"
-                });
-            }
+                var area = tipos[i];
+                var magnetArea = $(este).find("." + area);
 
-            if (isCenterH) {
-                var offsetV = getOffset(este, "v");
+                if (isInner) {
+                    var offsetH = getOffset(este, "h");
+                    var offsetV = getOffset(este, "v");
 
-                magnetArea.css({
-                    position: "absolute",
-                    top: ((pheight / 2) - offsetV) + "px",
-                    left: "0px",
-                    width: pwidth + "px",
-                    height: (offsetV * 2) + "px"
-                });
+                    magnetArea.css({
+                        position: "absolute",
+                        top: offsetV + offset + "px",
+                        left: offsetH + offset + "px",
+                        width: (pwidth - (offsetH * 2) - (offset * 2)) + "px",
+                        height: (pheight - (offsetV * 2) - (offset * 2)) + "px"
+                    });
+                }
+
+                if (isCenterV) {
+                    var offsetH = getOffset(este, "h");
+
+                    magnetArea.css({
+                        position: "absolute",
+                        top: "0px",
+                        left: ((pwidth / 2) - offsetH) + "px",
+                        width: (offsetH * 2) + "px",
+                        height: pheight + "px"
+                    });
+                }
+
+                if (isCenterH) {
+                    var offsetV = getOffset(este, "v");
+
+                    magnetArea.css({
+                        position: "absolute",
+                        top: ((pheight / 2) - offsetV) + "px",
+                        left: "0px",
+                        width: pwidth + "px",
+                        height: (offsetV * 2) + "px"
+                    });
+                }
             }
         }
 
@@ -179,15 +200,10 @@
          */
         function isValidElement(event, ui) {
 
-            var el = ui.draggable;
+            var el = ui.helper;
             var classes = settings.classAffected;
 
-            if (typeof classes === "string") {
-                classes = classes.rtrim();
-                classes = classes.split(" ");
-            } else {
-                classes = new Array("");
-            }
+            classes = getArrayFromString(classes);
 
             var hasClasses = false;
             var tmp = "";
@@ -200,6 +216,35 @@
                 }
             }
             return hasClasses;
+        }
+
+        function isEphemeralElement(event, ui) {
+            var el = ui.helper;
+            var classes = settings.classEphemeral;
+
+            classes = getArrayFromString(classes);
+
+            var canTrigger = false;
+            var tmp = "";
+            for (var i = 0; i < classes.length; i++) {
+                tmp = classes[i];
+                tmp = tmp.trim();
+                if (el.hasClass(tmp) || tmp === "") {
+                    canTrigger = true;
+                    break;
+                }
+            }
+            return canTrigger;
+        }
+
+        function getArrayFromString(classes) {
+            if (typeof classes === "string") {
+                classes = classes.rtrim();
+                classes = classes.split(" ");
+            } else {
+                classes = new Array("");
+            }
+            return classes;
         }
 
         /**
@@ -220,7 +265,7 @@
          */
         function getConfig(event, ui) {
 
-            var el = ui.draggable;
+            var el = ui.helper;
             el = $(el);
 
             ctop = el.position().top;
@@ -277,17 +322,21 @@
          * Add elements that show the dropping zone enabled
          */
         function addVisibleDropZone() {
-            var div = $("<div>").addClass("magnet-area").hide().appendTo(este);
+            var divw = $("<div>").addClass("magnet-area magnet-area-white").hide().appendTo(este);
+            var divb = $("<div>").addClass("magnet-area magnet-area-black").hide().appendTo(este);
             if (isInner) {
-                div.addClass("magnet-area-inner");
+                divw.addClass("magnet-area-inner");
+                divb.addClass("magnet-area-inner");
             }
 
             if (isCenterV) {
-                div.addClass("magnet-area-vertical");
+                divw.addClass("magnet-area-vertical");
+                divb.addClass("magnet-area-vertical");
             }
 
             if (isCenterH) {
-                div.addClass("magnet-area-horizontal");
+                divw.addClass("magnet-area-horizontal");
+                divb.addClass("magnet-area-horizontal");
             }
         }
 
@@ -297,9 +346,9 @@
          * @param {type} ui
          * @returns {Boolean}
          */
-        function getCenterV(event, ui) {
+        function setCenterV(event, ui) {
             getConfig(event, ui);
-            var el = $(ui.draggable);
+            var el = $(ui.helper);
             if (cCenterLeft >= vlimitLeftCentral && cCenterLeft <= vlimitRightCentral) {
                 el.css("left", function() {
                     var da = (pleft + (pwidth / 2) - (cwidth / 2)) + "px";
@@ -316,9 +365,9 @@
          * @param {type} ui
          * @returns {Boolean}
          */
-        function getCenterH(event, ui) {
+        function setCenterH(event, ui) {
             getConfig(event, ui);
-            var el = $(ui.draggable);
+            var el = $(ui.helper);
             if (cCenterTop >= hlimitTopCentral && cCenterTop <= hlimitBottomCentral) {
                 el.css("top", function() {
                     var da = (ptop + (pheight / 2) - (cheight / 2)) + "px";
@@ -334,10 +383,10 @@
          * @param {type} event
          * @param {type} ui
          */
-        function getInner(event, ui) {
+        function setInner(event, ui) {
             getConfig(event, ui);
 
-            var el = ui.draggable;
+            var el = ui.helper;
             el = $(el);
 
             var inner = false;
@@ -371,6 +420,39 @@
             }
 
             return inner;
+        }
+
+        function applyPadding(event, ui) {
+            getConfig(event, ui);
+
+            var el = ui.helper;
+            el = $(el);
+
+            var _left = el.position().left;
+            var _right = _left + el.width();
+            var _top = el.position().top;
+            var _bottom = _top + el.height();
+
+            var padd = settings.padding;
+            var maxPaddWidth = pwidth - padd;
+            var maxPaddHeight = pheight - padd;
+            
+            console.debug("X: " + _left + " should between (" + padd + "," + (maxPaddWidth-el.width()) + ")");
+            console.debug("Y: " + _top + " should between (" + padd + "," + (maxPaddHeight-el.height()) + ")");
+            
+            if (_left < padd) {
+                el.css("left", _left + "px");
+            } else if (_right > maxPaddWidth) {
+                el.css("left", (maxPaddWidth - el.width()) + "px");
+            }
+
+            if (_top < padd) {
+                el.css("top", padd + "px");
+            } else if(_bottom > maxPaddHeight) {
+                el.css("top", (maxPaddHeight- el.height()) + "px");
+            }
+            
+            console.debug(el.css("left") + " - " + el.css("top"));
         }
 
         /**
@@ -459,7 +541,7 @@
  */
 String.prototype.trim = function() {
     return this.replace(/^\s+|\s+$/g, "");
-}
+};
 
 /**
  * Delete the white spaces at start of String
@@ -467,7 +549,7 @@ String.prototype.trim = function() {
  */
 String.prototype.ltrim = function() {
     return this.replace(/^\s+/, "");
-}
+};
 
 /**
  * Delete the white spaces at end of String
@@ -475,7 +557,7 @@ String.prototype.ltrim = function() {
  */
 String.prototype.rtrim = function() {
     return this.replace(/\s+$/, "");
-}
+};
 
 /**
  * Find a string inside String
@@ -484,4 +566,4 @@ String.prototype.rtrim = function() {
 String.prototype.contains = function(str) {
     var str = this.toString();
     return (str.indexOf(str) !== -1);
-}
+};

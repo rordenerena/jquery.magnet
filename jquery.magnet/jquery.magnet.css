@@ -1,17 +1,17 @@
 .magnet-drag {
-    background-color: orange !important;
+    
 }
 
 .magnet-over {
-    background-color: pink !important;
+    
 }
 
 .magnet-hover {
-    background-color: black !important;
+    
 }
 
 .magnet-area {
-    background-color: transparent !important;
+    
 }
 
 .magnet-area-horizontal {
@@ -24,4 +24,12 @@
 
 .magnet-area-inner {
     border: 1px solid aqua;
+}
+
+.magnet-area-black {
+    border: 1px solid black;
+}
+
+.magnet-area-white {
+    border: 1px solid white;
 }
