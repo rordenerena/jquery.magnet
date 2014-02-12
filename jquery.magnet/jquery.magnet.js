@@ -57,10 +57,10 @@
             var hlimitTopCentral, hlimitBottomCentral; // Horizontal center line data
             var isInner, isCenterV, isCenterH, isCenter; // Type positioning flags
             var isAddedVisibleDropZone;
-            var este;
+            var magnet;
 
             return this.each(function() {
-                este = this;
+                magnet = $(this);
                 $(this).droppable({
                     tolerance: settings.tolerance,
                     activate: function(event, ui) {
@@ -132,10 +132,10 @@
         function magnetZone(action) {
             if (settings.highlight) {
                 if (action === "show") {
-                    $(este).find(".magnet-area").show();
+                    magnet.find(".magnet-area").show();
                     resizeMagnetArea();
                 } else if (action === "hide") {
-                    $(este).find(".magnet-area").hide();
+                    magnet.find(".magnet-area").hide();
                 }
             }
         }
@@ -151,11 +151,11 @@
             for (var i = 0; i < tipos.length; i++, offset++) {
 
                 var area = tipos[i];
-                var magnetArea = $(este).find("." + area);
+                var magnetArea = magnet.find("." + area);
 
                 if (isInner) {
-                    var offsetH = getOffset(este, "h");
-                    var offsetV = getOffset(este, "v");
+                    var offsetH = getOffset(magnet, "h");
+                    var offsetV = getOffset(magnet, "v");
 
                     magnetArea.css({
                         position: "absolute",
@@ -167,7 +167,7 @@
                 }
 
                 if (isCenterV) {
-                    var offsetH = getOffset(este, "h");
+                    var offsetH = getOffset(magnet, "h");
 
                     magnetArea.css({
                         position: "absolute",
@@ -179,7 +179,7 @@
                 }
 
                 if (isCenterH) {
-                    var offsetV = getOffset(este, "v");
+                    var offsetV = getOffset(magnet, "v");
 
                     magnetArea.css({
                         position: "absolute",
@@ -265,24 +265,24 @@
          */
         function getConfig(event, ui) {
 
-            var el = ui.helper;
-            el = $(el);
+            var element = ui.helper;
+            element = $(element);
 
-            ctop = el.position().top;
-            cleft = el.position().left;
-            cheight = el.height();
-            cwidth = el.width();
+            ctop = element.position().top;
+            cleft = element.position().left;
+            cheight = element.height();
+            cwidth = element.width();
 
-            ptop = $(este).position().top;
-            pleft = $(este).position().left;
-            pheight = $(este).height();
-            pwidth = $(este).width();
+            ptop = magnet.position().top;
+            pleft = magnet.position().left;
+            pheight = magnet.height();
+            pwidth = magnet.width();
 
             cCenterLeft = (cleft + (cwidth / 2));
             cCenterTop = (ctop + (cheight / 2));
 
-            var offsetH = getOffset(este, "h");
-            var offsetV = getOffset(este, "v");
+            var offsetH = getOffset(magnet, "h");
+            var offsetV = getOffset(magnet, "v");
 
             var pLeftCenter = pleft + (pwidth / 2);
             var pTopCenter = ptop + (pheight / 2);
@@ -322,8 +322,8 @@
          * Add elements that show the dropping zone enabled
          */
         function addVisibleDropZone() {
-            var divw = $("<div>").addClass("magnet-area magnet-area-white").hide().appendTo(este);
-            var divb = $("<div>").addClass("magnet-area magnet-area-black").hide().appendTo(este);
+            var divw = $("<div>").addClass("magnet-area magnet-area-white").hide().appendTo(magnet);
+            var divb = $("<div>").addClass("magnet-area magnet-area-black").hide().appendTo(magnet);
             if (isInner) {
                 divw.addClass("magnet-area-inner");
                 divb.addClass("magnet-area-inner");
@@ -391,33 +391,78 @@
 
             var inner = false;
 
-            var offsetH = getOffset(este, "h");
-            var offsetV = getOffset(este, "v");
+            var offsetH = getOffset(magnet, "h");
+            var offsetV = getOffset(magnet, "v");
 
-            //Top
-            if (Math.abs(ptop - ctop) <= offsetV) {
+            //From Top Element
+
+            var minTop = ptop;
+            var maxTop = ptop + offsetV;
+            var maxBottom = ptop + pheight;
+            var minBottom = maxBottom - offsetV;
+
+
+            /*
+             if(minTop between ctop and cbottom or maxTop between ctop and cbottom) {   
+             }
+             else if (minBottom between ctop) {
+             }
+             */
+            var cbottom = ctop + cheight;
+            if ((minTop >= ctop && minTop <= cbottom) || (maxTop >= ctop && maxTop <= cbottom)) {
                 debug("TOP: " + ptop + "px");
                 el.css("top", ptop + "px");
                 inner = true;
             }
-            //Bottom
-            if (Math.abs((ptop + pheight) - (ctop + cheight)) <= offsetV) {
+
+            if ((minBottom >= ctop && minBottom <= cbottom) || (maxBottom >= ctop && maxBottom <= cbottom)) {
                 debug("BOTTOM: " + (ptop + pheight - cheight) + "px");
                 el.css("top", (ptop + pheight - cheight) + "px");
                 inner = true;
             }
-            //Left
-            if (Math.abs(pleft - cleft) <= offsetH) {
+
+            var minLeft = pleft;
+            var maxLeft = pleft + offsetH;
+            var maxRight = pleft + pwidth;
+            var minRight = maxRight - offsetH;
+
+            var cright = cleft + cwidth;
+            if ((minLeft >= cleft && minLeft <= cright) || (maxLeft >= cleft && maxLeft <= cright)) {
                 debug("LEFT: " + pleft + "px");
                 el.css("left", pleft + "px");
                 inner = true;
             }
-            //Right
-            if (Math.abs((pleft + pwidth) - (cleft + cwidth)) <= offsetH) {
+
+            if ((minRight >= cleft && minRight <= cright) || (maxRight >= cleft && maxRight <= cright)) {
                 debug("RIGHT: " + (pleft + pwidth - cwidth) + "px");
                 el.css("left", (pleft + pwidth - cwidth) + "px");
                 inner = true;
             }
+
+
+//            if ((ctop - ptop) <= offsetV) {
+//                debug("TOP: " + ptop + "px");
+//                el.css("top", ptop + "px");
+//                inner = true;
+//            }
+//            //From Bottom Element
+//            if (((ptop + pheight) - (ctop + cheight)) <= offsetV) {
+//                debug("BOTTOM: " + (ptop + pheight - cheight) + "px");
+//                el.css("top", (ptop + pheight - cheight) + "px");
+//                inner = true;
+//            }
+            //Left
+//            if (Math.abs(pleft - cleft) <= offsetH) {
+//                debug("LEFT: " + pleft + "px");
+//                el.css("left", pleft + "px");
+//                inner = true;
+//            }
+//            //Right
+//            if (Math.abs((pleft + pwidth) - (cleft + cwidth)) <= offsetH) {
+//                debug("RIGHT: " + (pleft + pwidth - cwidth) + "px");
+//                el.css("left", (pleft + pwidth - cwidth) + "px");
+//                inner = true;
+//            }
 
             return inner;
         }
@@ -436,10 +481,7 @@
             var padd = settings.padding;
             var maxPaddWidth = pwidth - padd;
             var maxPaddHeight = pheight - padd;
-            
-            console.debug("X: " + _left + " should between (" + padd + "," + (maxPaddWidth-el.width()) + ")");
-            console.debug("Y: " + _top + " should between (" + padd + "," + (maxPaddHeight-el.height()) + ")");
-            
+
             if (_left < padd) {
                 el.css("left", _left + "px");
             } else if (_right > maxPaddWidth) {
@@ -448,11 +490,9 @@
 
             if (_top < padd) {
                 el.css("top", padd + "px");
-            } else if(_bottom > maxPaddHeight) {
-                el.css("top", (maxPaddHeight- el.height()) + "px");
+            } else if (_bottom > maxPaddHeight) {
+                el.css("top", (maxPaddHeight - el.height()) + "px");
             }
-            
-            console.debug(el.css("left") + " - " + el.css("top"));
         }
 
         /**
@@ -462,7 +502,7 @@
          * @returns {@exp;settings@pro;offset|Number|@exp;settings@pro;offset@call;replace|value}
          */
         function getOffset(el, position) {
-            el = $(el);
+
             var offset = (settings.offset);
             if (offset.indexOf("%") !== -1) {
                 //In percentage

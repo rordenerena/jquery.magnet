@@ -9,31 +9,34 @@
         <script src="jquery.magnet.js"></script>
         <link rel="stylesheet" href="jquery.magnet.css" />
         <style>
+            body {
+                background-color: cyan;
+            }
             .dropping {
                 position: absolute;
-                right: 10px;
-                top: 10px;
+                right: 200px;
+                top: 50px;
                 background-color: red;
                 width: 150px;
-                height: 300px;
+                height: 200px;
             }
 
             .draging {
                 position: absolute;
-                width: 30px;
-                height: 10px;
-                background-color: yellow;
+                width: 40px;
+                height: 40px;
+                background-color: blue;
             }
         </style>
     </head>
     <body>
         <div class="dropping"></div>
-        <div class="draging roberto"></div>
+        <div class="draging classToMagnetize"></div>
         <script>
             $(".dropping").magnet({
                 offset: "10px",
                 type: ["INNER"],
-                classAffected: "roberto"
+                classAffected: "classToMagnetize"
             });
 
             $(".draging").draggable();
