@@ -52,9 +52,10 @@
             var ctop, cleft, cwidth, cheight; // Children draggable data
             var ptop, pleft, pwidth, pheight; // Parent Droppable data
             var cCenterLeft, cCenterTop; // Center Horizontal and Vertical children position
-            var vlimitLeftCentral, vlimitRightCentral; // Vertical center line data
-            var hlimitTopCentral, hlimitBottomCentral; // Horizontal center line data
+            var pTopCenterMin, pTopCenterMax; // Vertical center line data
+            var pLeftCenterMin, pLeftCenterMax; // Horizontal center line data
             var isInner, isCenterV, isCenterH, isCenter; // Type positioning flags
+            var pLeftCenter, pTopCenter;
             var isAddedVisibleDropZone;
             var magnet;
 
@@ -64,6 +65,7 @@
                     tolerance: settings.tolerance,
                     activate: function(event, ui) {
                         if (isValidElement(event, ui) || isEphemeralElement(event, ui)) {
+                            makeMagnetArea();
                             magnetZone("hide");
                             getConfig(event, ui);
                             $(this).addClass("magnet-drag");
@@ -72,6 +74,7 @@
                     },
                     over: function(event, ui) {
                         if (isValidElement(event, ui) || isEphemeralElement(event, ui)) {
+                            makeMagnetArea();
                             magnetZone("show");
                             getConfig(event, ui);
 
@@ -81,6 +84,7 @@
                     },
                     out: function(event, ui) {
                         if (isValidElement(event, ui) || isEphemeralElement(event, ui)) {
+                            makeMagnetArea();
                             magnetZone("hide");
                             getConfig(event, ui);
 
@@ -91,6 +95,7 @@
                     drop: function(event, ui) {
                         var isEphemeral = isEphemeralElement(event, ui);
                         if (isValidElement(event, ui) || isEphemeral) {
+                            makeMagnetArea();
                             magnetZone("hide");
                             getConfig(event, ui);
 
@@ -106,7 +111,7 @@
                                 centerh = setCenterH(event, ui);
                             }
                             if (isCenter) {
-//                            center = getCenter(event, ui);
+                                center = setCenter(event, ui);
                             }
 
                             applyPadding(event, ui);
@@ -126,13 +131,13 @@
 
         /**
          * Show/Hide the magnet zone
-         * @param {type} action
+         * @param action
          */
         function magnetZone(action) {
             if (settings.highlight) {
                 if (action === "show") {
                     magnet.find(".magnet-area").show();
-                    resizeMagnetArea();
+                    setMagnetArea();
                 } else if (action === "hide") {
                     magnet.find(".magnet-area").hide();
                 }
@@ -142,7 +147,7 @@
         /**
          * Resize the element of the magnet area
          */
-        function resizeMagnetArea() {
+        function setMagnetArea() {
 
             var tipos = ["magnet-area-black", "magnet-area-white"];
             var offset = 0;
@@ -165,7 +170,7 @@
                     });
                 }
 
-                if (isCenterV) {
+                if (isCenterH) {
                     var offsetH = getOffset(magnet, "h");
 
                     magnetArea.css({
@@ -177,7 +182,7 @@
                     });
                 }
 
-                if (isCenterH) {
+                if (isCenterV) {
                     var offsetV = getOffset(magnet, "v");
 
                     magnetArea.css({
@@ -188,13 +193,20 @@
                         height: (offsetV * 2) + "px"
                     });
                 }
+
+                if (isCenter) {
+                    var offsetV = getOffset(magnet, "v");
+                    var offsetH = getOffset(magnet, "h");
+
+                    //Set the SVG with shape instead of html element
+                }
             }
         }
 
         /**
          * Check if the element dragging over the element droppable is valid
-         * @param {type} event
-         * @param {type} ui
+         * @param event
+         * @param ui
          * @returns {@exp;ui@pro;draggable@call;hasClass}
          */
         function isValidElement(event, ui) {
@@ -248,8 +260,8 @@
 
         /**
          * Method to animate the element dropped in this
-         * @param {type} event
-         * @param {type} ui
+         * @param event
+         * @param ui
          */
         function animateElement(event, ui) {
             if (settings.animate) {
@@ -257,10 +269,17 @@
             }
         }
 
+        function makeMagnetArea() {
+            if (!isAddedVisibleDropZone) {
+                isAddedVisibleDropZone = true;
+                addVisibleDropZone();
+            }
+        }
+
         /**
          * Set the data values needed to plugin
-         * @param {type} event
-         * @param {type} ui
+         * @param event
+         * @param ui
          */
         function getConfig(event, ui) {
 
@@ -283,14 +302,14 @@
             var offsetH = getOffset(magnet, "h");
             var offsetV = getOffset(magnet, "v");
 
-            var pLeftCenter = pleft + (pwidth / 2);
-            var pTopCenter = ptop + (pheight / 2);
+            pLeftCenter = pleft + (pwidth / 2);
+            pTopCenter = ptop + (pheight / 2);
 
-            vlimitLeftCentral = pLeftCenter - offsetH;
-            vlimitRightCentral = pLeftCenter + offsetH;
+            pLeftCenterMin = pLeftCenter - offsetH;
+            pLeftCenterMax = pLeftCenter + offsetH;
 
-            hlimitTopCentral = pTopCenter - offsetV;
-            hlimitBottomCentral = pTopCenter + offsetV;
+            pTopCenterMin = pTopCenter - offsetV;
+            pTopCenterMax = pTopCenter + offsetV;
 
             isInner = isCenter = isCenterH = isCenterV = false;
 
@@ -307,14 +326,13 @@
                 if ($.inArray("CENTERV", settings.type) !== -1 && $.inArray("CENTERH", settings.type) !== -1) {
                     //Nothing TODO
                 } else {
+//                    settings.offset = "100%";
                     isCenter = true;
                 }
             }
 
-            if (!isAddedVisibleDropZone) {
-                isAddedVisibleDropZone = true;
-                addVisibleDropZone();
-            }
+            makeMagnetArea();
+
         }
 
         /**
@@ -337,50 +355,76 @@
                 divw.addClass("magnet-area-horizontal");
                 divb.addClass("magnet-area-horizontal");
             }
+
+            if (isCenter) {
+                divw.addClass("magnet-area-center");
+                divb.addClass("magnet-area-center");
+            }
         }
 
         /**
          * Doing the work needed to center vertically the children dropped
-         * @param {type} event
-         * @param {type} ui
+         * @param event
+         * @param ui
          * @returns {Boolean}
          */
         function setCenterV(event, ui) {
             getConfig(event, ui);
             var el = $(ui.helper);
-            if (cCenterLeft >= vlimitLeftCentral && cCenterLeft <= vlimitRightCentral) {
-                el.css("left", function() {
-                    var da = (pleft + (pwidth / 2) - (cwidth / 2)) + "px";
+
+            var centerv = false;
+
+            var cbottom = ctop + cheight;
+            if ((pTopCenterMin >= ctop && pTopCenterMin <= cbottom) || (pTopCenterMax >= ctop && pTopCenterMax <= cbottom)) {
+                el.css("top", function() {
+                    var da = (pTopCenter - (cheight / 2)) + "px";
                     return da;
                 });
-                return true;
+                centerv = true;
             }
-            return false;
+
+            return centerv;
+
         }
 
         /**
          * Doing the work needed to center horizontally the children dropped
-         * @param {type} event
-         * @param {type} ui
+         * @param event
+         * @param ui
          * @returns {Boolean}
          */
         function setCenterH(event, ui) {
             getConfig(event, ui);
             var el = $(ui.helper);
-            if (cCenterTop >= hlimitTopCentral && cCenterTop <= hlimitBottomCentral) {
-                el.css("top", function() {
-                    var da = (ptop + (pheight / 2) - (cheight / 2)) + "px";
+
+            var centerh = false;
+
+            var cright = cleft + cwidth;
+
+            if ((pLeftCenterMin >= cleft && pLeftCenterMin <= cright) || (pLeftCenterMax >= cleft && pLeftCenterMax <= cright)) {
+                el.css("left", function() {
+                    var da = (pLeftCenter - (cwidth / 2)) + "px";
                     return da;
                 });
-                return true;
+                centerh = true;
             }
-            return false;
+            return centerh;
+        }
+
+        /**
+         * Uses centerh and centerv with offset at 100%
+         * @param event
+         * @param ui
+         */
+        function setCenter(event, ui) {
+            setCenterH(event, ui);
+            setCenterV(event, ui);
         }
 
         /**
          * Doing the work needed to set the position if configured as INNER
-         * @param {type} event
-         * @param {type} ui
+         * @param event
+         * @param ui
          */
         function setInner(event, ui) {
             getConfig(event, ui);
@@ -397,73 +441,39 @@
             var maxTop = ptop + offsetV;
             var maxBottom = ptop + pheight;
             var minBottom = maxBottom - offsetV;
+
+            var cbottom = ctop + cheight;
+            if ((minTop >= ctop && minTop <= cbottom) || (maxTop >= ctop && maxTop <= cbottom)) {
+                debug("TOP: " + ptop + "px");
+                el.css("top", ptop);
+                inner = true;
+            }
+
+            if ((minBottom >= ctop && minBottom <= cbottom) || (maxBottom >= ctop && maxBottom <= cbottom)) {
+                debug("BOTTOM: " + (ptop + pheight - cheight) + "px");
+                el.css("top", (ptop + pheight - cheight));
+                inner = true;
+            }
+
             var minLeft = pleft;
             var maxLeft = pleft + offsetH;
             var maxRight = pleft + pwidth;
             var minRight = maxRight - offsetH;
 
-            var pos = getPositionMagnetized({
-                minTop: minTop,
-                maxTop: maxTop,
-                minLeft: minLeft,
-                maxLeft: maxLeft,
-                minBottom: minBottom,
-                maxBottom: maxBottom,
-                minRight: minRight,
-                maxRight: maxRight
-            });
-
-            var left = pos.left;
-            var top = pos.top;
-
-            if (left !== undefined) {
-                el.css("left", left);
-                inner = true;
-            }
-            if (top !== undefined) {
-                el.css("top", top);
-                inner = true;
-            }
-
-            return inner;
-        }
-
-        function getPositionMagnetized(jsonPos) {
-
-            var minTop = jsonPos.minTop;
-            var maxTop = jsonPos.maxTop;
-            var minBottom = jsonPos.minBottom;
-            var maxBottom = jsonPos.maxBottom;
-            var minLeft = jsonPos.minLeft;
-            var maxLeft = jsonPos.maxLeft;
-            var minRight = jsonPos.minRight;
-            var maxRight = jsonPos.maxRight;
-
-            var el = new Object();
-
-            var cbottom = ctop + cheight;
-            if ((minTop >= ctop && minTop <= cbottom) || (maxTop >= ctop && maxTop <= cbottom)) {
-                debug("TOP: " + ptop + "px");
-                el.top = ptop;
-            }
-
-            if ((minBottom >= ctop && minBottom <= cbottom) || (maxBottom >= ctop && maxBottom <= cbottom)) {
-                debug("BOTTOM: " + (ptop + pheight - cheight) + "px");
-                el.top = (ptop + pheight - cheight);
-            }
-
             var cright = cleft + cwidth;
             if ((minLeft >= cleft && minLeft <= cright) || (maxLeft >= cleft && maxLeft <= cright)) {
                 debug("LEFT: " + pleft + "px");
-                el.left = pleft;
+                el.css("left", pleft);
+                inner = true;
             }
 
             if ((minRight >= cleft && minRight <= cright) || (maxRight >= cleft && maxRight <= cright)) {
                 debug("RIGHT: " + (pleft + pwidth - cwidth) + "px");
-                el.left = pleft + pwidth - cwidth;
+                el.css("left", (pleft + pwidth - cwidth));
+                inner = true;
             }
 
-            return el;
+            return inner;
         }
 
         function applyPadding(event, ui) {
@@ -496,8 +506,8 @@
 
         /**
          * Return the number of pixels setted in offset indepently if are em, px or %.
-         * @param {type} el
-         * @param {type} position
+         * @param el
+         * @param position
          * @returns {@exp;settings@pro;offset|Number|@exp;settings@pro;offset@call;replace|value}
          */
         function getOffset(el, position) {
@@ -526,9 +536,9 @@
         }
         /**
          * Generic auxiliar method to invoke the callbacks setted by the user
-         * @param {type} type
-         * @param {type} event
-         * @param {type} ui
+         * @param type
+         * @param event
+         * @param ui
          */
         function callback(type, event, ui) {
             switch (type) {
@@ -561,7 +571,7 @@
         }
         /**
          * Method to print to standard output messages if plugin is in debug mode
-         * @param {type} message
+         * @param message
          */
         function debug(message) {
             if (settings.debug && window.console && window.console.log) {
