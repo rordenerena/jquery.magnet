@@ -34,7 +34,6 @@
         if (jQuery.ui) {
             var settings = $.extend({
                 offset: "10px",
-//                offsetCenter: "10px",
                 padding: "0px",
                 type: ["INNER"], // Array with the types availables are: INNER, CENTERV, CENTERH, CENTER, ALL
                 animate: true,
@@ -394,77 +393,77 @@
             var offsetH = getOffset(magnet, "h");
             var offsetV = getOffset(magnet, "v");
 
-            //From Top Element
-
             var minTop = ptop;
             var maxTop = ptop + offsetV;
             var maxBottom = ptop + pheight;
             var minBottom = maxBottom - offsetV;
-
-
-            /*
-             if(minTop between ctop and cbottom or maxTop between ctop and cbottom) {   
-             }
-             else if (minBottom between ctop) {
-             }
-             */
-            var cbottom = ctop + cheight;
-            if ((minTop >= ctop && minTop <= cbottom) || (maxTop >= ctop && maxTop <= cbottom)) {
-                debug("TOP: " + ptop + "px");
-                el.css("top", ptop + "px");
-                inner = true;
-            }
-
-            if ((minBottom >= ctop && minBottom <= cbottom) || (maxBottom >= ctop && maxBottom <= cbottom)) {
-                debug("BOTTOM: " + (ptop + pheight - cheight) + "px");
-                el.css("top", (ptop + pheight - cheight) + "px");
-                inner = true;
-            }
-
             var minLeft = pleft;
             var maxLeft = pleft + offsetH;
             var maxRight = pleft + pwidth;
             var minRight = maxRight - offsetH;
 
+            var pos = getPositionMagnetized({
+                minTop: minTop,
+                maxTop: maxTop,
+                minLeft: minLeft,
+                maxLeft: maxLeft,
+                minBottom: minBottom,
+                maxBottom: maxBottom,
+                minRight: minRight,
+                maxRight: maxRight
+            });
+
+            var left = pos.left;
+            var top = pos.top;
+
+            if (left !== undefined) {
+                el.css("left", left);
+                inner = true;
+            }
+            if (top !== undefined) {
+                el.css("top", top);
+                inner = true;
+            }
+
+            return inner;
+        }
+
+        function getPositionMagnetized(jsonPos) {
+
+            var minTop = jsonPos.minTop;
+            var maxTop = jsonPos.maxTop;
+            var minBottom = jsonPos.minBottom;
+            var maxBottom = jsonPos.maxBottom;
+            var minLeft = jsonPos.minLeft;
+            var maxLeft = jsonPos.maxLeft;
+            var minRight = jsonPos.minRight;
+            var maxRight = jsonPos.maxRight;
+
+            var el = new Object();
+
+            var cbottom = ctop + cheight;
+            if ((minTop >= ctop && minTop <= cbottom) || (maxTop >= ctop && maxTop <= cbottom)) {
+                debug("TOP: " + ptop + "px");
+                el.top = ptop;
+            }
+
+            if ((minBottom >= ctop && minBottom <= cbottom) || (maxBottom >= ctop && maxBottom <= cbottom)) {
+                debug("BOTTOM: " + (ptop + pheight - cheight) + "px");
+                el.top = (ptop + pheight - cheight);
+            }
+
             var cright = cleft + cwidth;
             if ((minLeft >= cleft && minLeft <= cright) || (maxLeft >= cleft && maxLeft <= cright)) {
                 debug("LEFT: " + pleft + "px");
-                el.css("left", pleft + "px");
-                inner = true;
+                el.left = pleft;
             }
 
             if ((minRight >= cleft && minRight <= cright) || (maxRight >= cleft && maxRight <= cright)) {
                 debug("RIGHT: " + (pleft + pwidth - cwidth) + "px");
-                el.css("left", (pleft + pwidth - cwidth) + "px");
-                inner = true;
+                el.left = pleft + pwidth - cwidth;
             }
 
-
-//            if ((ctop - ptop) <= offsetV) {
-//                debug("TOP: " + ptop + "px");
-//                el.css("top", ptop + "px");
-//                inner = true;
-//            }
-//            //From Bottom Element
-//            if (((ptop + pheight) - (ctop + cheight)) <= offsetV) {
-//                debug("BOTTOM: " + (ptop + pheight - cheight) + "px");
-//                el.css("top", (ptop + pheight - cheight) + "px");
-//                inner = true;
-//            }
-            //Left
-//            if (Math.abs(pleft - cleft) <= offsetH) {
-//                debug("LEFT: " + pleft + "px");
-//                el.css("left", pleft + "px");
-//                inner = true;
-//            }
-//            //Right
-//            if (Math.abs((pleft + pwidth) - (cleft + cwidth)) <= offsetH) {
-//                debug("RIGHT: " + (pleft + pwidth - cwidth) + "px");
-//                el.css("left", (pleft + pwidth - cwidth) + "px");
-//                inner = true;
-//            }
-
-            return inner;
+            return el;
         }
 
         function applyPadding(event, ui) {

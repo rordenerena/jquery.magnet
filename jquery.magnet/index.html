@@ -27,15 +27,22 @@
                 height: 40px;
                 background-color: blue;
             }
+            
+            .github {
+                position: absolute;
+                bottom: 5px;
+                right: 10px;
+            }
         </style>
     </head>
     <body>
         <div class="dropping"></div>
         <div class="draging classToMagnetize"></div>
+        <a class="github" href="https://github.com/dakotadelnorte/jquery.magnet">jQuery.Magnet</a>
         <script>
             $(".dropping").magnet({
-                offset: "10px",
-                type: ["INNER"],
+                offset: "1em",
+                type: ["OUTTER"],
                 classAffected: "classToMagnetize"
             });
 
