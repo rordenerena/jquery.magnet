@@ -382,14 +382,20 @@
             var el = $(ui.helper);
 
             var centerv = false;
-
             var cbottom = ctop + cheight;
+            var pbottom = ptop + pheight;
+
+
             if ((pTopCenterMin >= ctop && pTopCenterMin <= cbottom) || (pTopCenterMax >= ctop && pTopCenterMax <= cbottom)) {
-                el.css("top", function() {
-                    var da = (pTopCenter - (cheight / 2)) + "px";
-                    return da;
-                });
                 centerv = true;
+            } else if ((ctop >= pTopCenterMin && cbottom <= pTopCenterMax)) {
+                centerv = true;
+            }
+
+            if (centerv) {
+                el.css({
+                    top: (pTopCenter - (cheight / 2)) + "px"
+                });
             }
 
             return centerv;
@@ -409,14 +415,20 @@
             var centerh = false;
 
             var cright = cleft + cwidth;
+            var pright = pleft + pwidth;
 
             if ((pLeftCenterMin >= cleft && pLeftCenterMin <= cright) || (pLeftCenterMax >= cleft && pLeftCenterMax <= cright)) {
-                el.css("left", function() {
-                    var da = (pLeftCenter - (cwidth / 2)) + "px";
-                    return da;
-                });
+                centerh = true;
+            } else if ((pLeftCenterMin <= cleft && pLeftCenterMax >= cright)) {
                 centerh = true;
             }
+
+            if (centerh) {
+                el.css({
+                    left: (pLeftCenter - (cwidth / 2)) + "px"
+                });
+            }
+
             return centerh;
         }
 

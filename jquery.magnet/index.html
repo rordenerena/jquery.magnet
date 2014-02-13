@@ -23,9 +23,10 @@
 
             .draging {
                 position: absolute;
-                width: 200px;
-                height: 200px;
+                width: 20px;
+                height: 10px;
                 background-color: blue;
+                opacity: 0.6;
             }
             
             .github {
@@ -42,7 +43,7 @@
         <script>
             $(".dropping").magnet({
                 offset: "50px",
-                type: ["CENTER"],
+                type: ["INNER"],
                 classAffected: "classToMagnetize"
             });
 
