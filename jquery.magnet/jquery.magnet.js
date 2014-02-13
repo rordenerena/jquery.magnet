@@ -56,6 +56,7 @@
             var pLeftCenterMin, pLeftCenterMax; // Horizontal center line data
             var isInner, isCenterV, isCenterH, isCenter; // Type positioning flags
             var pLeftCenter, pTopCenter;
+            var offsetH, offsetV;
             var isAddedVisibleDropZone;
             var magnet;
 
@@ -175,10 +176,10 @@
 
                     magnetArea.css({
                         position: "absolute",
-                        top: "0px",
-                        left: ((pwidth / 2) - offsetH) + "px",
-                        width: (offsetH * 2) + "px",
-                        height: pheight + "px"
+                        top: (0 + offset) + "px",
+                        left: ((pwidth / 2) - offsetH + offset) + "px",
+                        width: (offsetH * 2 - (offset * 2)) + "px",
+                        height: (pheight - (offset * 2)) + "px"
                     });
                 }
 
@@ -187,10 +188,10 @@
 
                     magnetArea.css({
                         position: "absolute",
-                        top: ((pheight / 2) - offsetV) + "px",
-                        left: "0px",
-                        width: pwidth + "px",
-                        height: (offsetV * 2) + "px"
+                        top: ((pheight / 2) - offsetV + offset) + "px",
+                        left: 0 + offset + "px",
+                        width: pwidth - (offset * 2) + "px",
+                        height: (offsetV * 2 - (offset * 2)) + "px"
                     });
                 }
 
@@ -198,7 +199,15 @@
                     var offsetV = getOffset(magnet, "v");
                     var offsetH = getOffset(magnet, "h");
 
-                    //Set the SVG with shape instead of html element
+                    var css = {
+                        position: "absolute",
+                        top: ((pheight / 2) - offsetV + offset) + "px",
+                        left: ((pwidth / 2) - offsetH + offset) + "px",
+                        width: ((offsetH * 2) - (offset * 2)) + "px",
+                        height: ((offsetV * 2) - (offset * 2)) + "px"
+                    };
+
+                    magnetArea.css(css);
                 }
             }
         }
@@ -299,8 +308,8 @@
             cCenterLeft = (cleft + (cwidth / 2));
             cCenterTop = (ctop + (cheight / 2));
 
-            var offsetH = getOffset(magnet, "h");
-            var offsetV = getOffset(magnet, "v");
+            offsetH = getOffset(magnet, "h");
+            offsetV = getOffset(magnet, "v");
 
             pLeftCenter = pleft + (pwidth / 2);
             pTopCenter = ptop + (pheight / 2);
@@ -417,8 +426,81 @@
          * @param ui
          */
         function setCenter(event, ui) {
-            setCenterH(event, ui);
-            setCenterV(event, ui);
+            getConfig(event, ui);
+            var el = $(ui.helper);
+
+            var xleft = pLeftCenter - offsetH;
+            var xright = pLeftCenter + offsetH;
+            var xtop = pTopCenter - offsetV;
+            var xbottom = pTopCenter + offsetV;
+
+            var cright = cleft + cwidth;
+            var cbottom = ctop + cheight;
+
+            var elementHisBigger = false;
+            var elementVisBigger = false;
+
+            if (cwidth >= pwidth) {
+                elementHisBigger = true;
+            }
+            if (cheight >= pheight) {
+                elementVisBigger = true;
+            }
+            var doCenter = false;
+
+            if (!elementHisBigger && !elementVisBigger) {
+                //The element is more little than area
+                if (((cleft >= xleft && cleft <= xright) || (cright >= xleft && cright <= xright))
+                        || ((ctop >= xtop && ctop <= xbottom) || (cbottom >= xtop && cbottom <= xbottom))) {
+                    doCenter = true;
+                }
+            } else if (elementHisBigger && elementVisBigger) {
+                //The element is bigger than area
+                //1. If the area magnet is fully hidden
+                if (cleft <= xleft && cright >= xright && ctop <= xtop && cbottom >= xbottom) {
+                    doCenter = true;
+                }
+                if (((cleft >= xleft && cleft <= xright) || (cright >= xleft && cright <= xright))
+                        || ((ctop >= xtop && ctop <= xbottom) || (cbottom >= xtop && cbottom <= xbottom))) {
+                    doCenter = true;
+                }
+
+            } else if (elementHisBigger && !elementVisBigger) {
+                //LANDSCAPE
+                if (((cleft >= xleft && cleft <= xright) || (cright >= xleft && cright <= xright))
+                        && ((ctop >= xtop && ctop <= xbottom) || (cbottom >= xtop && cbottom <= xbottom))) {
+                    doCenter = true;
+                } else if (((xleft >= cleft && xleft <= cright) || (xright >= cleft && xright <= cright))) {
+                    if ((ctop >= xtop && cbottom <= xbottom)) {
+                        doCenter = true;
+                    } else if (cbottom >= xtop && cbottom <= xbottom) {
+                        doCenter = true;
+                    } else if (ctop >= xtop && ctop <= xbottom) {
+                        doCenter = true;
+                    }
+                }
+            } else {
+                //PORTRAIT
+                if (((cleft >= xleft && cleft <= xright) || (cright >= xleft && cright <= xright))
+                        && ((ctop >= xtop && ctop <= xbottom) || (cbottom >= xtop && cbottom <= xbottom))) {
+                    doCenter = true;
+                } else if (((xtop >= ctop && xtop <= cbottom) || (xbottom >= ctop && xbottom <= cbottom))) {
+                    if (cleft >= xleft && cright <= xright) {
+                        doCenter = true;
+                    } else if (cleft >= xleft && cleft <= xright) {
+                        doCenter = true;
+                    } else if (cright >= xleft && cright <= xright) {
+                        doCenter = true;
+                    }
+                }
+            }
+
+            if (doCenter) {
+                el.css({
+                    top: (pTopCenter - (cheight / 2)) + "px",
+                    left: (pLeftCenter - (cwidth / 2)) + "px"
+                });
+            }
         }
 
         /**
