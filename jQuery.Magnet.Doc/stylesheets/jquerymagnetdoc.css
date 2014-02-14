@@ -1,0 +1,51 @@
+/* 
+    Created on : 14-feb-2014, 19:40:53
+    Author     : Roberto Orden Erena (dakotadelnorte@gmail.com)
+*/
+
+.typeMagnet {
+    
+    margin-top: 50px;
+    width: 92%;
+    margin-left: 4%;
+}
+
+.typeMagnet table {
+    width: 100%;
+}
+
+.typeMagnet table tr td:first-child {
+    text-align: center;
+}
+
+.explainCenter, .explainCenterH, .explainCenterV {
+    display: none;
+}
+
+.tapiz {
+    margin-left: 4%;
+    margin-right: 4%;
+    margin-top: 20px;
+    width: 92%;
+    height: 400px;
+    background: none repeat scroll 0 0 #212121;
+    margin-bottom: 40px;
+}
+
+.magnetized {
+    position: absolute;
+    width: 30%;
+    height: 50%;
+    background: none repeat scroll 0 0 #DDD;
+    margin-left: 60%;
+    margin-top: 35px;
+}
+
+.element {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background: none repeat scroll 0 0 #FFCC33;
+    margin-left: 20px;
+    margin-top: 100px;
+}
