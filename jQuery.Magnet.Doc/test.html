@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title></title>
+        <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+        <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+        <!--<script src="extendJs.js"></script>-->
+        <script src="jquery.magnet.js"></script>
+        <link rel="stylesheet" href="jquery.magnet.css" />
+        <style>
+            body {
+                background-color: cyan;
+            }
+            .dropping {
+                position: absolute;
+                right: 200px;
+                top: 50px;
+                background-color: red;
+                width: 150px;
+                height: 200px;
+            }
+
+            .draging {
+                position: absolute;
+                width: 20px;
+                height: 10px;
+                background-color: blue;
+                opacity: 0.6;
+            }
+            
+            .github {
+                position: absolute;
+                bottom: 5px;
+                right: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="dropping"></div>
+        <div class="draging classToMagnetize"></div>
+        <a class="github" href="https://github.com/dakotadelnorte/jquery.magnet">jQuery.Magnet</a>
+        <script>
+            $(".dropping").magnet({
+                offset: "50px",
+                type: ["INNER"],
+                classAffected: "classToMagnetize"
+            });
+
+            $(".draging").draggable();
+        </script>
+    </body>
+</html>
