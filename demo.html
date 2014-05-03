@@ -57,7 +57,7 @@
 
 			function setMagnet() {
 				offset = $("#offsetMagnet").val();
-				offset += $("#typeOffsetMagnet").find(":selected").text()
+				offset += $("#typeOffsetMagnet").find(":selected").text();
 				console.log("Type: '" + type + "'; Offset: '" + offset + "'");
 				$(".magnetDemo .dropping").magnet({
 					offset : offset,
@@ -82,13 +82,13 @@
 				</tr>
 				<tr>
 					<td>Offset:
-					<input id="offsetMagnet" type="number" value="10%" />
+					<input id="offsetMagnet" type="number" value="10" />
 					</td>
 					<td>
 					<select id="typeOffsetMagnet">
-						<option value="%">%</option>
-						<option value="px">px</option>
-						<option value="em">em</option>
+						<option >%</option>
+						<option >px</option>
+						<option >em</option>
 					</select></td>
 				</tr>
 				<tr>
@@ -103,12 +103,12 @@
 				</tr>
 				<tr>
 					<td>
-					<input type="radio" name="group1" value="CENTER_H">
+					<input type="radio" name="group1" value="CENTERH">
 					CENTER_H</td>
 				</tr>
 				<tr>
 					<td>
-					<input type="radio" name="group1" value="CENTER_V">
+					<input type="radio" name="group1" value="CENTERV">
 					CENTER_V</td>
 				</tr>
 				<tr>
