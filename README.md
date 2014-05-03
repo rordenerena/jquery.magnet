@@ -3,7 +3,7 @@ jquery.magnet
 
 A plugin to magnetize elements into magnet elements in a determinate position and zone.
 
-[http://dakotadelnorte.github.io/jquery.magnet/demo.html "VIEW DEMO"]
+View Demo at: http://dakotadelnorte.github.io/jquery.magnet/demo.html 
 
 ##Options
 
