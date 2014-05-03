@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>Demo Jquery.Magnet</title>
+		<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+		<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+		<script src="./javascripts/jquery.magnet.js" type="text/javascript"></script>
+		<link rel="stylesheet" href="./stylesheets/jquery.magnet.css" />
+		<style>
+			.dropping {
+				position: absolute;
+				right: 10px;
+				top: 10px;
+				background-color: red;
+				width: 150px;
+				height: 300px;
+			}
+
+			.dragging {
+				position: absolute;
+				width: 50px;
+				height: 20px;
+				background-color: yellow;
+				cursor: pointer;
+			}
+			.magnetDemo {
+				position: absolute;
+				right: 0px;
+				top: 0px;
+				border: 1px solid black;
+				width: 50%;
+				height: 90%;
+				overflow: hidden;
+			}
+			.actions {
+				position: absolute;
+				left: 0px;
+				top: 0px;
+				width: 49%;
+				height: 90%;
+			}
+		</style>
+		<script>
+			var type = "INNER";
+			var offset = "10%";
+			window.onload = function() {
+				$("input[type=radio]").click(function() {
+					type = $(this).attr("value");
+				});
+				$("#submitMagnet").click(function() {
+					draw();
+					setMagnet();
+				}).trigger("click");
+
+			};
+
+			function setMagnet() {
+				offset = $("#offsetMagnet").val();
+				offset += $("#typeOffsetMagnet").find(":selected").text()
+				console.log("Type: '" + type + "'; Offset: '" + offset + "'");
+				$(".magnetDemo .dropping").magnet({
+					offset : offset,
+					type : [type],
+					classAffected : "roberto"
+				});
+
+				$(".magnetDemo .dragging").draggable();
+			}
+
+			function draw() {
+				$(".magnetDemo").html("").append($("<div>").addClass("dropping")).append($("<div>").addClass("dragging").addClass("roberto"));
+			}
+		</script>
+	</head>
+	<body>
+		<div class="actions" style="padding-left: 20px;padding-top:20px;">
+
+			<table>
+				<tr>
+					<th>CONFIGURATION</th>
+				</tr>
+				<tr>
+					<td>Offset:
+					<input id="offsetMagnet" type="number" value="10%" />
+					</td>
+					<td>
+					<select id="typeOffsetMagnet">
+						<option value="%">%</option>
+						<option value="px">px</option>
+						<option value="em">em</option>
+					</select></td>
+				</tr>
+				<tr>
+					<td>
+					<input type="radio" name="group1" value="INNER">
+					INNER</td>
+				</tr>
+				<tr>
+					<td>
+					<input type="radio" name="group1" value="CENTER">
+					CENTER</td>
+				</tr>
+				<tr>
+					<td>
+					<input type="radio" name="group1" value="CENTER_H">
+					CENTER_H</td>
+				</tr>
+				<tr>
+					<td>
+					<input type="radio" name="group1" value="CENTER_V">
+					CENTER_V</td>
+				</tr>
+				<tr>
+					<td >
+					<input id="submitMagnet" type="button" value="Update" style="width: 100%;" />
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div class="magnetDemo">
+			<div class="dropping">
+				DROP ZONE
+			</div>
+			<div class="dragging roberto">
+				DRAG
+			</div>
+		</div>
+	</body>
+</html>
