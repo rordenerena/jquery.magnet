@@ -1,53 +1,187 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title></title>
-        <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-        <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-        <!--<script src="extendJs.js"></script>-->
-        <script src="jquery.magnet.js"></script>
-        <link rel="stylesheet" href="jquery.magnet.css" />
-        <style>
-            body {
-                background-color: cyan;
-            }
-            .dropping {
-                position: absolute;
-                right: 200px;
-                top: 50px;
-                background-color: red;
-                width: 150px;
-                height: 200px;
-            }
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>Demo Jquery.Magnet</title>
+		<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+		<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+		<script src="jquery.magnet.js"></script>
+		<link rel="stylesheet" href="jquery.magnet.css" />
+		<style>
+			.dropping {
+				position: absolute;
+				right: 10px;
+				top: 10px;
+				background-color: red;
+				width: 150px;
+				height: 300px;
+			}
 
-            .draging {
-                position: absolute;
-                width: 20px;
-                height: 10px;
-                background-color: blue;
-                opacity: 0.6;
-            }
-            
-            .github {
-                position: absolute;
-                bottom: 5px;
-                right: 10px;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="dropping"></div>
-        <div class="draging classToMagnetize"></div>
-        <a class="github" href="https://github.com/dakotadelnorte/jquery.magnet">jQuery.Magnet</a>
-        <script>
-            $(".dropping").magnet({
-                offset: "50px",
-                type: ["INNER"],
-                classAffected: "classToMagnetize"
-            });
+			.dragging {
+				position: absolute;
+				width: 50px;
+				height: 20px;
+				background-color: white;
+				opacity: 0.5;
+				border: 1px solid black;
+				cursor: pointer;
+				text-align: center;
+			}
+			.magnetDemo {
+				position: absolute;
+				right: 0px;
+				top: 0px;
+				width: 50%;
+				height: 90%;
+			}
+			.actions {
+				position: absolute;
+				left: 0px;
+				top: 0px;
+				width: 49%;
+				height: 90%;
+			}
+		</style>
+		<script>
+			var type = "INNER";
+			var offset = "10%";
+			window.onload = function() {
+				$("input[type=radio]").click(function() {
+					type = $(this).attr("value");
+				});
 
-            $(".draging").draggable();
-        </script>
-    </body>
+				$("#submitMagnet").click(function() {
+					draw();
+					setMagnet();
+				}).trigger("click");
+
+				$("#shapeLittle").click(function() {
+					defaultDropZone();
+					setSizeDragElement(10, 10);
+				});
+				$("#shapeBigger").click(function() {
+					defaultDropZone();
+					setSizeDragElement(50, 50);
+				});
+				$("#shapeLandscape").click(function() {
+					defaultDropZone();
+					setSizeDragElement(50, 20);
+				});
+				$("#shapePortrait").click(function() {
+					defaultDropZone();
+					setSizeDragElement(20, 50);
+				});
+
+				defaultDropZone();
+				setSizeDragElement(10, 10);
+			};
+
+			function setSizeDragElement(w, h) {
+				$(".magnetDemo .dragging").css({
+					width : w + "%",
+					height : h + "%"
+				});
+			}
+
+			function defaultDropZone() {
+				$(".magnetDemo .dropping").css({
+					left : "30%",
+					top : "30%",
+					width : "40%",
+					height : "40%"
+				});
+			}
+
+			function setMagnet() {
+				offset = $("#offsetMagnet").val();
+				offset += $("#typeOffsetMagnet").find(":selected").text();
+				console.log("Type: '" + type + "'; Offset: '" + offset + "'");
+				$(".magnetDemo .dropping").magnet({
+					offset : offset,
+					type : [type],
+					classAffected : "roberto"
+				});
+
+				$(".magnetDemo .dragging").draggable();
+			}
+
+			function draw() {
+				$(".magnetDemo").html("").append($("<div>").addClass("dropping").text("DROP")).append($("<div>").addClass("dragging").addClass("roberto").text("DRAG"));
+				defaultDropZone();
+				setSizeDragElement(10, 10);
+			}
+		</script>
+	</head>
+	<body>
+		<div class="actions" style="padding-left: 20px;padding-top:20px;">
+			<table>
+				<tr>
+					<th colspan="4">SHAPE ELEMENT</th>
+				</tr>
+				<tr>
+					<td>
+					<input id="shapeLittle" type="button" value="Little" />
+					</td>
+					<td>
+					<input id="shapeBigger" type="button" value="Bigger" />
+					</td>
+					<td>
+					<input id="shapeLandscape" type="button" value="Landscape" />
+					</td>
+					<td>
+					<input id="shapePortrait" type="button" value="Portrait" />
+					</td>
+				</tr>
+			</table>
+			<table>
+				<tr>
+					<th>CONFIGURATION</th>
+				</tr>
+				<tr>
+					<td>Offset:
+					<input id="offsetMagnet" type="number" value="10" />
+					</td>
+					<td>
+					<select id="typeOffsetMagnet">
+						<option >%</option>
+						<option >px</option>
+						<option >em</option>
+					</select></td>
+				</tr>
+				<tr>
+					<td>
+					<input type="radio" name="group1" value="INNER">
+					INNER</td>
+				</tr>
+				<tr>
+					<td>
+					<input type="radio" name="group1" value="CENTER">
+					CENTER</td>
+				</tr>
+				<tr>
+					<td>
+					<input type="radio" name="group1" value="CENTERH">
+					CENTER_H</td>
+				</tr>
+				<tr>
+					<td>
+					<input type="radio" name="group1" value="CENTERV">
+					CENTER_V</td>
+				</tr>
+				<tr>
+					<td >
+					<input id="submitMagnet" type="button" value="Update" style="width: 100%;" />
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div class="magnetDemo">
+			<div class="dropping">
+				DROP ZONE
+			</div>
+			<div class="dragging roberto">
+				DRAG
+			</div>
+		</div>
+	</body>
 </html>
