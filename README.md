@@ -7,7 +7,7 @@ View Demo at: http://dakotadelnorte.github.io/jquery.magnet/demo.html
 
 ##Options
 
-### Type Positioning *Custom*
+### *Custom* Type Positioning
 |Type|Description|
 |:--|:--|
 | **Inner**| Around the element inside the elements dropped in this, will be magnetized to the border.|
