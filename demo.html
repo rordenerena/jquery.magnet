@@ -21,9 +21,11 @@
 				position: absolute;
 				width: 50px;
 				height: 20px;
-				background-color: white;
-				border: 1px solid black;
+				background-color: black;
+				color: white;
+				opacity: 0.5;
 				cursor: pointer;
+				text-align: center;
 			}
 			.magnetDemo {
 				position: absolute;
@@ -47,12 +49,48 @@
 				$("input[type=radio]").click(function() {
 					type = $(this).attr("value");
 				});
+
 				$("#submitMagnet").click(function() {
 					draw();
 					setMagnet();
 				}).trigger("click");
 
+				$("#shapeLittle").click(function() {
+					defaultDropZone();
+					setSizeDragElement(10, 10);
+				});
+				$("#shapeBigger").click(function() {
+					defaultDropZone();
+					setSizeDragElement(50, 50);
+				});
+				$("#shapeLandscape").click(function() {
+					defaultDropZone();
+					setSizeDragElement(50, 20);
+				});
+				$("#shapePortrait").click(function() {
+					defaultDropZone();
+					setSizeDragElement(20, 50);
+				});
+
+				defaultDropZone();
+				setSizeDragElement(10, 10);
 			};
+
+			function setSizeDragElement(w, h) {
+				$(".magnetDemo .dragging").css({
+					width : w + "%",
+					height : h + "%"
+				});
+			}
+
+			function defaultDropZone() {
+				$(".magnetDemo .dropping").css({
+					left : "30%",
+					top : "30%",
+					width : "40%",
+					height : "40%"
+				});
+			}
 
 			function setMagnet() {
 				offset = $("#offsetMagnet").val();
@@ -69,12 +107,32 @@
 
 			function draw() {
 				$(".magnetDemo").html("").append($("<div>").addClass("dropping").text("DROP")).append($("<div>").addClass("dragging").addClass("roberto").text("DRAG"));
+				defaultDropZone();
+				setSizeDragElement(10, 10);
 			}
 		</script>
 	</head>
 	<body>
 		<div class="actions" style="padding-left: 20px;padding-top:20px;">
-
+			<table>
+				<tr>
+					<th colspan="4">SHAPE ELEMENT</th>
+				</tr>
+				<tr>
+					<td>
+					<input id="shapeLittle" type="button" value="Little" />
+					</td>
+					<td>
+					<input id="shapeBigger" type="button" value="Bigger" />
+					</td>
+					<td>
+					<input id="shapeLandscape" type="button" value="Landscape" />
+					</td>
+					<td>
+					<input id="shapePortrait" type="button" value="Portrait" />
+					</td>
+				</tr>
+			</table>
 			<table>
 				<tr>
 					<th>CONFIGURATION</th>
@@ -103,12 +161,12 @@
 				<tr>
 					<td>
 					<input type="radio" name="group1" value="CENTERH">
-					CENTER_H</td>
+					CENTERH</td>
 				</tr>
 				<tr>
 					<td>
 					<input type="radio" name="group1" value="CENTERV">
-					CENTER_V</td>
+					CENTERV</td>
 				</tr>
 				<tr>
 					<td >
