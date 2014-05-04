@@ -21,17 +21,16 @@
 				position: absolute;
 				width: 50px;
 				height: 20px;
-				background-color: yellow;
+				background-color: white;
+				border: 1px solid black;
 				cursor: pointer;
 			}
 			.magnetDemo {
 				position: absolute;
 				right: 0px;
 				top: 0px;
-				border: 1px solid black;
 				width: 50%;
 				height: 90%;
-				overflow: hidden;
 			}
 			.actions {
 				position: absolute;
@@ -69,7 +68,7 @@
 			}
 
 			function draw() {
-				$(".magnetDemo").html("").append($("<div>").addClass("dropping")).append($("<div>").addClass("dragging").addClass("roberto"));
+				$(".magnetDemo").html("").append($("<div>").addClass("dropping").text("DROP")).append($("<div>").addClass("dragging").addClass("roberto").text("DRAG"));
 			}
 		</script>
 	</head>
